@@ -1,0 +1,96 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: user
+ * Date: 10.12.2015
+ * Time: 17:29
+ */
+
+namespace Album\Model;
+
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
+use Zend\InputFilter\InputFilter;
+
+class Album implements InputFilterAwareInterface
+{
+    public $id;
+    public $artist;
+    public $title;
+    private $inputFilter;
+
+    public function exchangeArray($data)
+    {
+        $this->id     = (!empty($data['id'])) ? $data['id'] : null;
+        $this->artist = (!empty($data['artist'])) ? $data['artist'] : null;
+        $this->title  = (!empty($data['title'])) ? $data['title'] : null;
+    }
+
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
+    }
+
+    public function setInputFilter(InputFilterInterface $inputFilter)
+    {
+        throw new \Exception("Not used");
+    }
+
+    public function getInputFilter()
+    {
+        if (!$this->inputFilter) {
+            $inputFilter = new InputFilter();
+
+            $inputFilter->add(array(
+                'name'     => 'id',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+            ));
+
+
+            $inputFilter->add(array(
+                'name'     => 'artist',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 100,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'     => 'title',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 100,
+                        ),
+                    ),
+                ),
+            ));
+
+            $this->inputFilter = $inputFilter;
+        }
+
+        return $this->inputFilter;
+    }
+}

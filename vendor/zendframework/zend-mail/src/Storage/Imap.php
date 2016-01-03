@@ -204,7 +204,7 @@ class Imap extends AbstractStorage implements Folder\FolderInterface, Writable\W
         $this->protocol = new Protocol\Imap();
         $this->protocol->connect($host, $port, $ssl);
         if (!$this->protocol->login($params->user, $password)) {
-            throw new Exception\RuntimeException('cannot login, user or password wrong');
+            throw new Exception\RuntimeException('cannot user, user or password wrong');
         }
         $this->selectFolder(isset($params->folder) ? $params->folder : 'INBOX');
     }

@@ -99,7 +99,7 @@ class DotNet extends SOAPClient
         $curlClient->setCurlOption(CURLOPT_HTTPAUTH, CURLAUTH_NTLM)
                    ->setCurlOption(CURLOPT_SSL_VERIFYHOST, false)
                    ->setCurlOption(CURLOPT_SSL_VERIFYPEER, false)
-                   ->setCurlOption(CURLOPT_USERPWD, $this->options['login'] . ':' . $this->options['password']);
+                   ->setCurlOption(CURLOPT_USERPWD, $this->options['user'] . ':' . $this->options['password']);
 
         // Perform the cURL request and get the response
         $curlClient->connect($uri->getHost(), $uri->getPort());

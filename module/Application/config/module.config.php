@@ -9,6 +9,7 @@
 
 namespace Application;
 
+
 return array(
     'router' => array(
         'routes' => array(
@@ -17,7 +18,7 @@ return array(
                 'options' => array(
                     'route'    => '/',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\Index',
+                        'controller' => 'Auth\Controller\User',
                         'action'     => 'index',
                     ),
                 ),

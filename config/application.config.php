@@ -5,11 +5,11 @@
  * @see http://framework.zend.com/manual/current/en/tutorials/config.advanced.html#environment-specific-system-configuration
  * @see http://framework.zend.com/manual/current/en/tutorials/config.advanced.html#environment-specific-application-configuration
  */
+
+//var_dump(  __DIR__ . '/../module'); die;
 return array(
     // This should be an array of module namespaces used in the application.
-    'modules' => array(
-        'Application',
-    ),
+    'modules' => array('Application', 'Album','Auth', ),
 
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(
@@ -28,6 +28,7 @@ return array(
         'config_glob_paths' => array(
             'config/autoload/{{,*.}global,{,*.}local}.php',
         ),
+
 
         // Whether or not to enable a configuration cache.
         // If enabled, the merged configuration will be cached and used in

@@ -205,7 +205,7 @@ class Client implements ServerClient
                     $this->setEncodingMethod($value);
                     break;
 
-                case 'login':
+                case 'user':
                     $this->setHttpLogin($value);
                     break;
 
@@ -301,7 +301,7 @@ class Client implements ServerClient
         $options['location']       = $this->getLocation();
         $options['style']          = $this->getStyle();
         $options['use']            = $this->getEncodingMethod();
-        $options['login']          = $this->getHttpLogin();
+        $options['user']          = $this->getHttpLogin();
         $options['password']       = $this->getHttpPassword();
         $options['proxy_host']     = $this->getProxyHost();
         $options['proxy_port']     = $this->getProxyPort();
@@ -587,7 +587,7 @@ class Client implements ServerClient
     }
 
     /**
-     * Set HTTP login
+     * Set HTTP user
      *
      * @param  string $login
      * @return self
@@ -679,7 +679,7 @@ class Client implements ServerClient
     }
 
     /**
-     * Set proxy login
+     * Set proxy user
      *
      * @param  string $proxyLogin
      * @return self
@@ -692,7 +692,7 @@ class Client implements ServerClient
     }
 
     /**
-     * Retrieve proxy login
+     * Retrieve proxy user
      *
      * @return string
      */
