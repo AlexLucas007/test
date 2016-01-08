@@ -1,0 +1,42 @@
+<?php
+// module/Album/view/album/album/index.phtml:
+
+$title = $this->userName.'\'s albums';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<p>
+    <a href="<?php echo $this->url('album', array('action'=>'addTrack', 'id'=>$album->id));?>">Add new track</a>
+</p>
+<?php if(count($tracks) == 0): echo('Album is empty');
+else:?>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>&nbsp;</th>
+        </tr>
+
+
+        <?php
+
+        foreach ($tracks as $track) : ?>
+            <tr>
+                <td><?php echo $this->escapeHtml($track['name']);?></td>
+                <td>
+                    <a href="<?php echo $this->url('album',
+                        array('action'=>'editTrack', 'id' => $track['id']));?>">Edit</a>
+                </td>
+                <td>
+                    <a href="<?php echo $this->url('album',
+                        array('action'=>'deleteTrack', 'id' => $track['id']));?>">Delete</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+    <?php
+    if(isset($this->userName)):
+        ?>
+    <?php endif; ?>
+<?php endif; ?>
+<br/>
+<a href="<?php echo $this->url('user', array('action'=>'logout'));?>">Log out</a>

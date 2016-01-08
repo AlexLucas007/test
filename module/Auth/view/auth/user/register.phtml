@@ -1,12 +1,12 @@
 <?php
 // module/Album/view/album/album/add.phtml:
 
-$title = 'Log in';
+$title = 'Sign up';
 $this->headTitle($title);
 ?>
     <h1><?php echo $this->escapeHtml($title); ?></h1>
 <?php
-$form->setAttribute('action', $this->url('user', array('action' => 'index')));
+$form->setAttribute('action', $this->url('user', array('action' => 'register')));
 $form->prepare();
 
 
@@ -15,7 +15,7 @@ echo $this->formRow($form->get('userName'));
 echo("<br>");
 echo $this->formRow($form->get('userPassword'));
 echo("<br>");
+echo $this->formRow($form->get('confirmPassword'));
+echo("<br>");
 echo $this->formSubmit($form->get('submit'));
 echo $this->form()->closeTag();
-?>
-<a href="<?php echo $this->url('user', array('action' => 'register')); ?>">Sign up</a>

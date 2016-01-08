@@ -17,6 +17,7 @@ class Album implements InputFilterAwareInterface
     public $id;
     public $artist;
     public $title;
+    public $userId;
     private $inputFilter;
 
     public function exchangeArray($data)

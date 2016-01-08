@@ -1,6 +1,7 @@
 <?php
 namespace Album;
 
+use Album\Model\Track;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Album\Model\Album;
@@ -39,7 +40,13 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Album());
-                    return new TableGateway('general_info', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('albums', $dbAdapter, null, $resultSetPrototype);
+                },
+                'TracksTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Track());
+                    return new TableGateway('tracks', $dbAdapter, null, $resultSetPrototype);
                 },
             ),
         );

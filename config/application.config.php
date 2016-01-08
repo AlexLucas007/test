@@ -6,10 +6,13 @@
  * @see http://framework.zend.com/manual/current/en/tutorials/config.advanced.html#environment-specific-application-configuration
  */
 
-//var_dump(  __DIR__ . '/../module'); die;
 return array(
     // This should be an array of module namespaces used in the application.
-    'modules' => array('Application', 'Album','Auth', ),
+    'modules' => array(
+        'Application',
+        'Album',
+        'Auth',
+        ),
 
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => array(

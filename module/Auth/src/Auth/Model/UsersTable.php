@@ -12,6 +12,8 @@ use Zend\Authentication\AuthenticationService;
 use Zend\Validator\Db\RecordExists;
 use Zend\Db\Sql\Select as Select;
 use Zend\Db\TableGateway\TableGateway;
+use Auth\Model\User;
+use Zend\Db\Sql\Sql;
 
 
 class UsersTable
@@ -35,7 +37,7 @@ class UsersTable
         $adapter = $this->tableGateway->getAdapter();
         $select->from('users')
             ->where->equalTo('name', $user->userName)
-            ->where->equalTo('pass', $user->password);
+            ->where->equalTo('pass', md5($user->password));
 
         $validator = new RecordExists($select);
         $validator->setAdapter($adapter);
@@ -56,9 +58,31 @@ class UsersTable
         $storage->write(array());
     }
 
-    public function deleteUserSession(User $user)
+    public function getUser(User $user)
     {
-        unset($this->currentUser);
+        $sql = new Sql($this->tableGateway->getAdapter());
+        $select = new Select();
+        $select->from('users')
+                 ->where->equalTo('name', $user->userName)
+                 ->where->equalTo('pass', md5($user->password));
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute();
+
+        return $result->current();
+    }
+
+    public function getUserId($userName)
+    {
+        $sql = new Sql($this->tableGateway->getAdapter());
+        $select = new Select();
+        $select->columns(array('id'));
+        $select->from('users')->where->equalTo('name', $userName);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute();
+
+        var_dump($result['id']); die;
 
     }
 
@@ -79,7 +103,12 @@ class UsersTable
 
     public function registerUser(User $user)
     {
+        $data = array(
+            'name' => $user->userName,
+            'pass' => md5($user->password),
+        );
 
+        $this->tableGateway->insert($data);
     }
 
 }

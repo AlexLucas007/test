@@ -9,11 +9,9 @@
 namespace Auth\Controller;
 
 use Auth\Form\LoginForm;
+use Auth\Form\RegistrationForm;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Album\Model\Album;
-use Album\Model\AlbumTable;
-use Album\Form\AlbumForm;
 use Auth\Model\User;
 use Zend\Session\SessionManager;
 use Zend\Authentication\AuthenticationService;
@@ -27,7 +25,7 @@ class UserController extends AbstractActionController
     protected $sessionStorage;
 
     /**
-     * user action
+     * login action
      */
     public function indexAction()
     {
@@ -43,23 +41,21 @@ class UserController extends AbstractActionController
             $userName = $request->getPost('userName');
             $password = $request->getPost('userPassword');
 
-            $user = new User();
-            $user->exchangeArray($request->getPost());
+            $data = new User();
+            $data->exchangeArray($request->getPost());
+            $user = $this->getUsersTable()->getUser($data);
 
-            $dbAdapter = $this->getUsersTable()->verifyUser($user);
-
-            if(!is_null($dbAdapter))
+          //  if($this->getUsersTable()->verifyUser($user))
+            if($user)
             {
                 //if user verified, open session
                 //echo('verified');die;
-                $userSession->userName = $userName;
-
-                //and go to the user's album list
-
+                $userSession->userName = $user['name'];
+                $userSession->userId = $user['id'];
             }
             else
             {
-                //see what was wrong and return to the log in form
+                //TODO:see what was wrong and return to the log in form
                 //with a corresponding error message
                 echo('not verified'); die;
 
@@ -73,24 +69,57 @@ class UserController extends AbstractActionController
         }
         else
         {
-            //die('user logged in'.$userSession->userName);
             return $this->redirect()->toRoute('album', array('action' => 'index'));
-
-            //echo("Welcome {$userSession->userName}");
         }
-
-
     }
-
 
     public function logoutAction()
     {
-
+        $userSession = new Container('user');
+        $userSession->getManager()->getStorage()->clear('user');
+        // or unset($_SESSION['user']);
+        return $this->redirect()->toRoute('user', array('action' => 'index'));
     }
 
     public function registerAction()
     {
+        $userSession = new Container('user');
+        if(isset($userSession->userName))
+            return $this->redirect()->toRoute('album', array('action' => 'index'));
 
+        $form = new RegistrationForm();
+
+        $request = $this->getRequest();
+        if($request->isPost())
+        {
+            $form->setData($request->getPost());
+
+            if($form->isValid())
+            {
+                $userName = $request->getPost('userName');
+                $password = $request->getPost('userPassword');
+
+                $user = new User();
+                $user->exchangeArray($request->getPost());
+
+                try{
+                    $this->getUsersTable()->registerUser($user);
+                }
+                catch(\Exception $e)
+                {
+                    //TODO: красиво выдать ошибку
+                    echo('User name already taken');
+                    return array('form' => $form);
+                }
+            }
+
+            $userSession->userName = $userName;
+            $userSession->userPassword = $password;
+
+            return $this->redirect()->toRoute('album', array('action' => 'index'));
+        }
+
+        return array('form' => $form);
     }
 
     public function getUsersTable()
@@ -103,6 +132,4 @@ class UserController extends AbstractActionController
 
         return $this->usersTable;
     }
-
-
 }

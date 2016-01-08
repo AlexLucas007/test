@@ -14,7 +14,7 @@ class LoginForm extends Form
 {
     public function __construct($name = null)
     {
-        parent::__construct('user');
+        parent::__construct('login');
         $this->setAttribute('method', 'post');
 
         $this->add(array(

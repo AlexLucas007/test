@@ -9,7 +9,11 @@
 
 namespace Album\Controller;
 
+use Album\Form\AddTrackForm;
+use Album\Model\Track;
+use Auth\Model\User;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 use Album\Model\Album;
 use Album\Model\AlbumTable;
@@ -22,13 +26,27 @@ class AlbumController extends AbstractActionController
 
     public function indexAction()
     {
+        $userSession = new Container('user');
+
+        if(!isset($userSession->userName))
+        {
+            return $this->redirect()->toRoute('user', array('action' => 'index'));
+        }
+
+        $user = new User();
+        $user->exchangeArray($userSession);
+
         return new ViewModel(array(
-            'albums' => $this->getAlbumTable()->fetchAll(),
+            //'albums' => $this->getAlbumTable()->fetchAll(),
+            'albums' => $this->getAlbumTable()->getUserAlbums($user),
+            'userName' => $userSession->userName,
         ));
     }
 
     public function addAction()
     {
+        $userSession = new Container('user');
+
         $form = new AlbumForm();
         $form->get('submit')->setValue('Add');
 
@@ -40,6 +58,7 @@ class AlbumController extends AbstractActionController
 
             if ($form->isValid()) {
                 $album->exchangeArray($form->getData());
+                $album->userId = $userSession->userId;
                 $this->getAlbumTable()->saveAlbum($album);
 
                 // Redirect to list of albums
@@ -92,7 +111,6 @@ class AlbumController extends AbstractActionController
         );
     }
 
-
     public function deleteAction()
     {
         $id = (int) $this->params()->fromRoute('id', 0);
@@ -118,7 +136,67 @@ class AlbumController extends AbstractActionController
             'album' => $this->getAlbumTable()->getAlbum($id)
         );
     }
+/*******************************    TRACKS  *******************************************/
 
+    public function tracklistAction()
+    {
+        $userSession = new Container('user');
+        if(!isset($userSession))
+            return $this->redirect()->toRoute('user', array('action' => 'index'));
+
+        $albumId = (int) $this->params()->fromRoute('id', 0);
+        if(!$albumId)
+        {
+            //TODO:return 'invalid album' message
+        }
+
+        return new ViewModel(array(
+            //'albums' => $this->getAlbumTable()->fetchAll(),
+            'tracks' => $this->getAlbumTable()->getAlbumTracks($albumId),
+            'userName' => $userSession->userName,
+            'album' => $this->getAlbumTable()->getAlbum($albumId),
+        ));
+    }
+
+    public function addTrackAction()
+    {
+        $form = new AddTrackForm();
+        $form->get('submit')->setValue('Add');
+
+        $id = (int)$this->params()->fromRoute('id', 0);
+
+        if($id)
+            $form->get('albumId')->setValue($id);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $track = new Track();
+            $albumId = $request->getPost()->albumId;
+
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $track->exchangeArray($form->getData());
+
+                $this->getAlbumTable()->saveTrack($track);
+
+                // Redirect to list of albums
+                return $this->redirect()->toRoute('album', array('action' => 'tracklist', 'id' => $albumId));
+            }
+        }
+        return array('form' => $form);
+    }
+
+    public function deleteTrack()
+    {
+
+    }
+
+    public function editTrack()
+    {
+
+    }
+/****************************************************************************************************/
     public function getAlbumTable()
     {
         if (!$this->albumTable) {

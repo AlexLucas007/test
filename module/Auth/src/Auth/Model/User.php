@@ -8,6 +8,7 @@
 
 namespace Auth\Model;
 
+use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 
@@ -19,9 +20,23 @@ class User implements InputFilterAwareInterface
     public $id;
     private $inputFilter;
 
+
     public function getInputFilter()
     {
         // TODO: Implement getInputFilter() method.
+        return;
+    /*    if(!$this->inputFilter)
+        {
+            $inputFilter = new InputFilter();
+
+            $inputFilter->add(array(
+                //'name' =>
+
+            )
+
+            );
+
+        }*/
 
     }
 
